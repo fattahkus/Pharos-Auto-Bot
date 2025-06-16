@@ -786,8 +786,11 @@ const main = async () => {
   logger.info(`Delay between cycles set to ${delayMinutes} minutes`);
 
   const proxies = loadProxies();
-  const privateKeys = [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2].filter(pk => pk);
-  if (!privateKeys.length) {
+  const privateKeys = Object.entries(process.env)
+  .filter(([key, value]) => key.startsWith('PRIVATE_KEY_') && value)
+  .map(([_, value]) => value);
+
+  if (privateKeys.length === 0) {
     logger.error('No private keys found in .env');
     return;
   }
